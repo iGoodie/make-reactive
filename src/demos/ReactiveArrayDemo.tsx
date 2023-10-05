@@ -7,7 +7,7 @@ export const ReactiveArrayDemo = () => {
 
   return (
     <section>
-      <h1>Demo of ./src/hooks/useReactiveSet.ts</h1>
+      <h1>Demo of ./src/hooks/useReactiveArray.ts</h1>
 
       <div className="actions">
         <button
