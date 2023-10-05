@@ -1,4 +1,4 @@
-import { makeReactive } from "../../lib/make-reactive";
+import makeReactive from "../../lib/make-reactive";
 
 export const useReactiveSet = makeReactive(<K>() => new Set<K>(), {
   add: true,
@@ -9,23 +9,12 @@ export const useReactiveSet = makeReactive(<K>() => new Set<K>(), {
 export const useReactiveMap = makeReactive(<K, V>() => new Map<K, V>(), {
   clear: true,
   delete: true,
-  // set(thisObject, key, value) {
-  //   return thisObject.get(key) !== value;
-  // },
-  // get: {
-  //   triggersRerender() {
-  //     return counter++ % 5 == 0;
-  //   },
-  // },
+  set: {
+    preCheck: (thisObject, key, value) => {
+      return thisObject.get(key) !== value;
+    },
+  },
 });
-
-// export const useReactiveMap = makeReactive(<K, V>() => new Map<K, V>(), {
-//   clear: true,
-//   delete: true,
-//   set: (thisValue, key, value) => {
-//     return thisValue.get(key) !== value;
-//   },
-// });
 
 const set = useReactiveSet<string>();
 const map = useReactiveMap<string, number>();
