@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 /* ---------------------------- */
 
 type ExtractMethods<T extends object> = {
-  [K in keyof T as T[K] extends Function ? K : never]: T[K];
+  [K in keyof Omit<T, "toString" | "toLocaleString"> as T[K] extends Function
+    ? K
+    : never]: T[K];
 };
 
 /* ---------------------------- */
-
-export type Initiator<T> = () => T;
 
 export type RerenderPredicate<T extends object, M extends keyof T> = (
   thisObject: T,
@@ -16,18 +16,10 @@ export type RerenderPredicate<T extends object, M extends keyof T> = (
   ...args: Parameters<T[M]>
 ) => boolean;
 
-export type PatcherMethod<T extends object, M extends keyof T> = (
-  superMethod: T[M],
-  thisObject: T,
-  // @ts-expect-error It is guaranteed for T[M] to be a function
-  ...args: Parameters<T[M]>
-) => // @ts-expect-error It is guaranteed for T[M] to be a function
-ReturnType<T[M]>;
-
 /* ---------------------------- */
 
 export type TargetMethodsConfig<T extends object> = {
-  [methodName in keyof ExtractMethods<T>]:
+  [methodName in keyof ExtractMethods<T>]?:
     | true
     | {
         triggersRerender?: {

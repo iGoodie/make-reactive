@@ -22,7 +22,7 @@ export const useReactiveMap = makeReactive(<K, V>() => new Map<K, V>(), {
   set: {
     triggersRerender: {
       pre: (thisObject, key, value) => {
-        // If the map does not contain the key, it means the value will be inserted
+        // If the map does not have the same key-value pair, then it will be mutated
         // Therefore it should trigger rerender
         return thisObject.get(key) !== value;
       },
