@@ -14,19 +14,27 @@
     "patch",
     "patcher"
   ],
-  "typings": "dist/@igoodie/make-reactive.d.ts",
-  "types": "dist/@igoodie/make-reactive.d.ts",
-  "source": "lib/@igoodie/make-reactive.ts",
-  "main": "dist/@igoodie/make-reactive.js",
-  "module": "dist/@igoodie/make-reactive.module.js",
-  "unpkg": "dist/@igoodie/make-reactive.umd.js",
-  "exports": "./dist/@igoodie/make-reactive.modern.js",
+  "main": "./dist/@igoodie/make-reactive.umd.js",
+  "module": "./dist/@igoodie/make-reactive.es.js",
+  "types": "./dist/lib/main.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/@igoodie/make-reactive.es.js",
+      "require": "./dist/@igoodie/make-reactive.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "start": "npm run build",
-    "tsc": "tsc",
-    "build": "microbundle --jsx React.createElement --compress",
-    "dev": "microbundle watch",
-    "prepublish": "npm run build"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext ts,tsx",
+    "lint:fix": "pnpm run lint --fix",
+    "type-check": "tsc --project tsconfig.json --pretty --noEmit",
+    "ci": "pnpm run lint && pnpm run type-check",
+    "prepare": "husky install"
   },
   "author": {
     "name": "iGoodie",
@@ -35,9 +43,15 @@
   },
   "license": "CC BY-SA 4.0",
   "devDependencies": {
+    "@types/node": "^20.8.2",
     "@types/react": "^18.2.19",
-    "microbundle": "^0.15.1",
-    "react-dom": "^18.2.0"
+    "@types/react-dom": "^18.2.10",
+    "@vitejs/plugin-react": "^4.1.0",
+    "react-dom": "^18.2.0",
+    "vite": "^4.4.11",
+    "vite-plugin-dts": "^3.6.0",
+    "vite-plugin-linter": "^2.0.6",
+    "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
     "react": "^18.2.0"

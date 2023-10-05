@@ -30,8 +30,20 @@ export type TargetMethodsConfig<T extends object> = {
   [methodName in keyof ExtractMethods<T>]:
     | true
     | {
-        preCheck?: RerenderPredicate<T, methodName>;
-        postCheck?: RerenderPredicate<T, methodName>;
+        triggersRerender?: {
+          /**
+           * Just before the actual call is executed,
+           * this hook checks wether this method call
+           * should trigger rerender or not.
+           */
+          pre?: RerenderPredicate<T, methodName>;
+          /**
+           * Right after the actual call is executed,
+           * this hook checks wether this method call
+           * should trigger rerender or not.
+           */
+          post?: RerenderPredicate<T, methodName>;
+        };
       };
 };
 
@@ -40,7 +52,7 @@ export function makeReactive<TArgs extends unknown[], T extends object>(
   targetMethods: Partial<TargetMethodsConfig<T>>
 ) {
   return function useReactiveSubject(...args: TArgs) {
-    const observer = useRef<MutationObserver>(null); // TODO: 3rd param for field mutation observer
+    // const observer = useRef<MutationObserver>(null); // TODO: 3rd param for field mutation observer
     const [subject] = useState<T>(() => initiator(...args));
     const [, update] = useState(0);
 
@@ -61,10 +73,17 @@ export function makeReactive<TArgs extends unknown[], T extends object>(
           };
         } else {
           patch = function (this: T, ...args: unknown[]) {
+            let shallRerender = targetConfig === true;
+
             // @ts-expect-error args are guaranteed to be the corresponding method's arguments
-            const shallRerender = targetConfig?.(this, ...args) ?? true;
+            if (targetConfig?.triggersRerender?.pre?.(this, ...args))
+              shallRerender ||= shallRerender;
 
             const superResult = superMethod.call(this, ...args);
+
+            // @ts-expect-error args are guaranteed to be the corresponding method's arguments
+            if (targetConfig?.triggersRerender?.post?.(this, ...args))
+              shallRerender ||= shallRerender;
 
             if (shallRerender) {
               update((i) => i + 1);
