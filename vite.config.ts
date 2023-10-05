@@ -15,7 +15,7 @@ export default defineConfig((configEnv) => ({
     //   linters: [new EsLinter({ configEnv })],
     // }),
     dts({
-      include: ["lib/main.tsx"],
+      include: ["lib/*"],
       beforeWriteFile: (filePath, content) => ({
         filePath: filePath.replace("/lib", ""),
         content,
@@ -26,6 +26,7 @@ export default defineConfig((configEnv) => ({
     lib: {
       entry: resolve("lib", "main.tsx"),
       name: "ReactFeatureFlag",
+      formats: ["cjs", "es", "umd", "iife"],
       fileName: (format) => `@igoodie/make-reactive.${format}.js`,
     },
     rollupOptions: {

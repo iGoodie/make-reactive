@@ -16,7 +16,7 @@
   ],
   "main": "./dist/@igoodie/make-reactive.umd.js",
   "module": "./dist/@igoodie/make-reactive.es.js",
-  "types": "./dist/lib/main.d.ts",
+  "types": "./dist/main.d.ts",
   "exports": {
     ".": {
       "import": "./dist/@igoodie/make-reactive.es.js",

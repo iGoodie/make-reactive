@@ -1,1 +1,1 @@
-export { makeReactive as default } from "./util/makeReactive";
+export { makeReactive as default } from "./makeReactive";
