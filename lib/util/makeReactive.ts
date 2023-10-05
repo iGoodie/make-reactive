@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 /* ---------------------------- */
 
@@ -77,13 +77,13 @@ export function makeReactive<TArgs extends unknown[], T extends object>(
 
             // @ts-expect-error args are guaranteed to be the corresponding method's arguments
             if (targetConfig?.triggersRerender?.pre?.(this, ...args))
-              shallRerender ||= shallRerender;
+              shallRerender = true;
 
             const superResult = superMethod.call(this, ...args);
 
             // @ts-expect-error args are guaranteed to be the corresponding method's arguments
             if (targetConfig?.triggersRerender?.post?.(this, ...args))
-              shallRerender ||= shallRerender;
+              shallRerender = true;
 
             if (shallRerender) {
               update((i) => i + 1);

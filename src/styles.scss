@@ -1,0 +1,78 @@
+$background: #635985;
+$primary: #443c68;
+$secondary: #393053;
+$ternary: #18122b;
+
+* {
+  font-weight: 500;
+}
+
+body {
+  margin: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $background;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: minmax(300px, 20vw) minmax(600px, 50vw);
+  gap: 20px;
+}
+
+nav {
+  padding: 20px;
+  background: $ternary;
+  color: $primary;
+}
+
+h1 {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: 800;
+  color: darken($secondary, 8);
+}
+
+button {
+  padding: 8px 10px;
+  border: none;
+  background: $primary;
+  border-radius: 8px;
+  color: lighten($primary, 80);
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  span {
+    margin: 0;
+    margin-inline-start: auto;
+    color: lighten($primary, 80);
+    font-family: "Courier New", Courier, monospace;
+
+    kbd {
+      padding: 5px 8px;
+      background: $primary;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 15px;
+    }
+  }
+}
+
+pre {
+  width: 100%;
+  padding: 20px;
+  background: darken($background, 5);
+  border-radius: 10px;
+  color: lighten($primary, 50);
+  font-size: 18px;
+}
