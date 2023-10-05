@@ -3,7 +3,7 @@ import { useReactiveSet } from "src/hooks/useReactiveSet";
 let rerenderCount = 0;
 
 export const ReactiveSetDemo = () => {
-  const set = useReactiveSet<string>();
+  const set = useReactiveSet<number>();
 
   return (
     <section>
@@ -12,7 +12,7 @@ export const ReactiveSetDemo = () => {
       <div className="actions">
         <button
           onClick={() => {
-            set.add(Math.random() + "");
+            set.add(Math.random());
           }}
         >
           Add Random Item

@@ -1,4 +1,4 @@
-import { ReactiveSetDemo } from "src/demos/ReactiveSetDemo";
+import { ReactiveMapDemo } from "src/demos/ReactiveMapDemo";
 import "./styles.scss";
 
 export const App = () => {
@@ -7,7 +7,7 @@ export const App = () => {
     <div className="app">
       <nav>TODO</nav>
 
-      <ReactiveSetDemo />
+      <ReactiveMapDemo />
     </div>
   );
 };
