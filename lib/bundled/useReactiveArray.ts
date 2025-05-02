@@ -1,4 +1,4 @@
-import { makeReactive } from "lib/makeReactive";
+import { makeReactive } from "../makeReactive";
 
 export const useReactiveArray = makeReactive(
   <T>(initialValue: T[] = []) => new Array<T>(...initialValue),

@@ -35,11 +35,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "build:demo": "tsc && vite build -c vite.config.demo.ts",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx",
     "lint:fix": "pnpm run lint --fix",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit",
-    "ci": "pnpm run lint && pnpm run type-check"
+    "ci": "pnpm run lint && pnpm run type-check",
+    "predeploy": ""
   },
   "devDependencies": {
     "@types/node": "^20.8.2",

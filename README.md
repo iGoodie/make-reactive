@@ -18,7 +18,7 @@
   <a href="https://github.com/iGoodie/make-reactive/tags">
     <img src="https://img.shields.io/github/v/tag/iGoodie/make-reactive"/>
   </a>
-  <a href="https://github.com/iGoodie/paper-editor">
+  <a href="https://github.com/iGoodie/make-reactive">
     <img src="https://img.shields.io/github/languages/top/iGoodie/make-reactive"/>
   </a>
 

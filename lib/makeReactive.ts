@@ -1,5 +1,5 @@
-import { ConfigBuilder } from "lib/configBuilder";
-import { ExtractMethods } from "lib/types";
+import { ConfigBuilder } from "./configBuilder";
+import { ExtractMethods } from "./types";
 import { useState } from "react";
 
 type AssureFunction<T> = T extends (...args: any[]) => any ? T : never;

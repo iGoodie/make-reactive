@@ -15,7 +15,7 @@ export default defineConfig((configEnv) => ({
     //   linters: [new EsLinter({ configEnv })],
     // }),
     dts({
-      include: ["lib/*"],
+      include: ["lib/**/*"],
       beforeWriteFile: (filePath, content) => ({
         filePath: filePath.replace("/lib", ""),
         content,

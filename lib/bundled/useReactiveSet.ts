@@ -1,4 +1,4 @@
-import { makeReactive } from "lib/makeReactive";
+import { makeReactive } from "../makeReactive";
 
 export const useReactiveSet = makeReactive(
   <T>() => new Set<T>(),

@@ -1,4 +1,4 @@
-import { makeReactive } from "lib/makeReactive";
+import { makeReactive } from "../makeReactive";
 
 export const useReactiveMap = makeReactive(
   <K, V>() => new Map<K, V>(),

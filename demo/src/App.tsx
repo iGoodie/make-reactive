@@ -1,6 +1,6 @@
-import { ReactiveArrayDemo } from "src/demos/ReactiveArrayDemo";
-import { ReactiveMapDemo } from "src/demos/ReactiveMapDemo";
-import { ReactiveSetDemo } from "src/demos/ReactiveSetDemo";
+import { ReactiveArrayDemo } from "./demos/ReactiveArrayDemo";
+import { ReactiveMapDemo } from "./demos/ReactiveMapDemo";
+import { ReactiveSetDemo } from "./demos/ReactiveSetDemo";
 
 import LogoSvg from "./assets/logo.svg";
 
