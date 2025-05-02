@@ -52,7 +52,7 @@ export const ReactiveMapDemo = () => {
       </pre>
 
       <a
-        href="https://github.com/iGoodie/make-reactive/blob/master/src/demos/ReactiveMapDemo.tsx"
+        href="https://github.com/iGoodie/make-reactive/blob/master/demo/src/demos/ReactiveMapDemo.tsx"
         target="_blank"
       >
         ^ See Code

@@ -40,7 +40,7 @@ export const ReactiveArrayDemo = () => {
       </pre>
 
       <a
-        href="https://github.com/iGoodie/make-reactive/blob/master/src/demos/ReactiveArrayDemo.tsx"
+        href="https://github.com/iGoodie/make-reactive/blob/master/demo/src/demos/ReactiveArrayDemo.tsx"
         target="_blank"
       >
         ^ See Code
