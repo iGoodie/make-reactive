@@ -4,7 +4,13 @@ import { useState } from "react";
 
 function injectMethodHooks<T extends object>(
   obj: T,
-  injection: ProxyHandler<T[keyof T] & Function>["apply"]
+  injection: <K extends keyof ExtractMethods<T>>(
+    obj: T,
+    prop: K,
+    target: T[K] & Function,
+    thisArg: ThisParameterType<T[K]>,
+    argArray: Parameters<AssureFunction<T[K]>>
+  ) => ReturnType<AssureFunction<T[K]>>
 ) {
   const methods = new Map<string | symbol, T[keyof T] & Function>();
 
@@ -14,7 +20,20 @@ function injectMethodHooks<T extends object>(
 
       if (typeof value === "function") {
         if (!methods.has(p)) {
-          methods.set(p, new Proxy(value, { apply: injection }));
+          methods.set(
+            p,
+            new Proxy(value, {
+              apply(target, thisArg, argArray) {
+                return injection(
+                  obj,
+                  p as never,
+                  target as never,
+                  thisArg as never,
+                  argArray as never
+                );
+              },
+            })
+          );
         }
 
         return methods.get(p);
@@ -40,7 +59,7 @@ type MethodHooks<T extends object> = {
 export function makeReactive<TArgs extends unknown[], TObj extends object>(
   initiator: (...args: TArgs) => TObj,
   configBuilder: ConfigBuilder<
-    [forceRerender: () => void, obj: TObj],
+    [forceRerender: () => void, originalObject: TObj],
     {
       methodHooks?: MethodHooks<TObj>;
       reflectionHooks?: ProxyHandler<TObj>;
@@ -50,22 +69,39 @@ export function makeReactive<TArgs extends unknown[], TObj extends object>(
   return function useReactiveObject(...args: TArgs) {
     const [, forceUpdate] = useState(0);
 
-    // const config = ConfigBuilder.calc(configBuilder, forceUpdate, obj);
-
     const [obj] = useState<TObj>(() => {
-      return injectMethodHooks(
-        initiator(...args),
-        (target, thisArg, argArray) => {
-          forceUpdate((i) => i + 1);
+      const object = initiator(...args);
+
+      const config = ConfigBuilder.calc(
+        configBuilder,
+        () => forceUpdate((i) => i + 1),
+        object
+      );
+
+      const injected = injectMethodHooks(
+        object,
+        (obj, prop, target, thisArg, argArray) => {
+          const methodHook = config.methodHooks?.[prop];
+
+          if (methodHook != null) {
+            if (methodHook === true) {
+              forceUpdate((i) => i + 1);
+            } else {
+              return methodHook(target, thisArg, argArray);
+            }
+          }
+
           return Reflect.apply(target, thisArg, argArray);
         }
       );
+
+      if (config.reflectionHooks != null) {
+        return new Proxy(injected, config.reflectionHooks);
+      }
+
+      return injected;
     });
 
     return obj;
   };
 }
-
-// const useReactiveMap = makeReactive(<K, V>() => new Map<K, V>());
-
-// const map = useReactiveMap();

@@ -1,16 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useReactiveArray } from "src/hooks/useReactiveArray.new";
-
-let rerenderCount = 0;
 
 export const ReactiveArrayDemo = () => {
   const array = useReactiveArray<number>();
 
-  // useEffect(() => {
-  //   if (array[0] === 10) return;
-  //   console.log("TIMBER!", array[0]);
-  //   array[0]++;
-  // }, [array[0]]);
+  const rerenderCount = useRef(0);
+
+  useEffect(() => {
+    if (array[0] === 10) return;
+    console.log("TIMBER!", array[0]);
+    if (!array[0]) array[0] = 0;
+    array[0]++;
+  }, [array[0]]);
 
   return (
     <section>
@@ -30,7 +31,7 @@ export const ReactiveArrayDemo = () => {
         <button onClick={() => array.splice(0)}>Clear</button>
 
         <span>
-          Rendered <kbd>{++rerenderCount}</kbd> times
+          Rendered <kbd>{++rerenderCount.current}</kbd> times
         </span>
       </div>
 

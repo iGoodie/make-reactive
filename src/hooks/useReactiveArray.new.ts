@@ -16,7 +16,7 @@ export const useReactiveArray = makeReactive(
     },
     reflectionHooks: {
       set(target, p, newValue, receiver) {
-        if (typeof p === "number") {
+        if (typeof p === "string" && Number(p) >= 0) {
           forceRerender();
         }
         return Reflect.set(target, p, newValue, receiver);
