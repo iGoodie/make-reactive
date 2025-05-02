@@ -12,8 +12,8 @@
 
   <!-- Main Badges -->
   <img src="https://raw.githubusercontent.com/iGoodie/paper-editor/master/.github/assets/main-badge.svg" height="20px"/>
-  <a href="https://www.npmjs.com/package/make-reactive">
-    <img src="https://img.shields.io/npm/v/make-reactive"/>
+  <a href="https://www.npmjs.com/package/@igoodie/make-reactive">
+    <img src="https://img.shields.io/npm/v/@igoodie/make-reactive"/>
   </a>
   <a href="https://github.com/iGoodie/make-reactive/tags">
     <img src="https://img.shields.io/github/v/tag/iGoodie/make-reactive"/>
@@ -50,4 +50,110 @@
 
 # Description
 
+This library allows you to create React hooks for arbitrary JavaScript objects, making them seamlessly reactive — without rewriting your data structure or wrapping everything in state.
+
+It’s the perfect way to bring reactivity to data types like Map, Set, or even your custom objects — and only trigger rerenders when necessary.
+
+# How to use?
+
+1. Use your favorite package manager to install as dependency
+
+```bash
+npm i @igoodie/make-reactive --save-dev
+# or
+yarn add @igoodie/make-reactive
+# or
+pnpm add @igoodie/make-reactive
+```
+
+2. Start using supported out-of-the-box hooks
+
+```tsx
+import {
+  useReactiveArray,
+  useReactiveMap,
+  useReactiveSet,
+} from "@igoodie/make-reactive";
+
+export function MyComponent() {
+  const array = useReactiveArray<number>();
+  const map = useReactiveMap<string, number>();
+  const set = useReactiveSet<number>();
+
+  return (
+    <>
+      <span>{array.length}</span>
+      <button onClick={() => array.push(99)}>
+        Reactive Array::push, will trigger rerender!
+      </button>
+
+      <span>{map.size}</span>
+      <button onClick={() => map.set("Hey!", 99)}>
+        Reactive Map::set, will trigger rerender!
+      </button>
+
+      <span>{set.size}</span>
+      <button onClick={() => set.add(99)}>
+        Reactive Set::add, will trigger rerender!
+      </button>
+    </>
+  );
+}
+```
+
+3. Or craft your own Reactive object, if you'd like to!
+
+```ts
+// src/entities/Player.ts
+
+export class Player {
+  _alive = true;
+  _health = 100;
+  _equipment = null;
+
+  get health() {
+    return this._health;
+  }
+
+  damage(quantity: number) {
+    this._health -= quantity;
+    if (this._health <= 0) this._alive = false;
+  }
+
+  equip(item: Item) {
+    if (this._equipment === item) return false;
+    this._equipment = item;
+    return true;
+  }
+}
+```
+```ts
+// src/hooks/usePlayer.ts
+
+import makeReactive from "@igoodie/make-reactive";
+
+export const usePlayer = makeReactive(
+  (player: Player) => player,
+  (forceRerender) => ({
+    damage: true,
+
+    equip(self, item) {
+      const result = self.equip(item);
+      if (result) forceRerender();
+      return result;
+    },
+  })
+);
+```
+
+# How does it work under the hood?
+
 TODO
+
+## License
+
+&copy; 2024 Taha Anılcan Metinyurt (iGoodie)
+
+For any part of this work for which the license is applicable, this work is licensed under the [Attribution-ShareAlike 4.0 International](http://creativecommons.org/licenses/by-sa/4.0/) license. (See LICENSE).
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a>
