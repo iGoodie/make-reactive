@@ -1,4 +1,4 @@
-import { makeReactive } from "lib/makeReactive.new";
+import { makeReactive } from "lib/makeReactive";
 
 export const useReactiveArray = makeReactive(
   <T>(initialValue: T[] = []) => new Array<T>(...initialValue),
@@ -13,8 +13,9 @@ export const useReactiveArray = makeReactive(
       reverse: true,
       shift: true,
       unshift: true,
+      sort: true,
     },
-    reflectionHooks: {
+    proxyHandlerOverrides: {
       set(target, p, newValue, receiver) {
         if (typeof p === "string" && Number(p) >= 0) {
           forceRerender();

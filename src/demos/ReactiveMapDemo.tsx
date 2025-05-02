@@ -1,6 +1,5 @@
-import { useReactiveMap } from "src/hooks/useReactiveMap";
-
-let rerenderCount = 0;
+import { useReactiveMap } from "@igoodie/make-reactive";
+import { useRef } from "react";
 
 const randomString = (len: number) =>
   "x"
@@ -16,10 +15,10 @@ const randomString = (len: number) =>
 export const ReactiveMapDemo = () => {
   const map = useReactiveMap<string, number>();
 
+  const rerenderCount = useRef(0);
+
   return (
     <section>
-      <h1>Demo of ./src/hooks/useReactiveMap.ts</h1>
-
       <div className="actions">
         <button
           onClick={() => {
@@ -32,7 +31,7 @@ export const ReactiveMapDemo = () => {
         <button
           disabled={map.size === 0}
           onClick={() => {
-            const [k, v] = map.entries().next().value;
+            const [k, v] = map.entries().next().value!;
             map.set(k, v);
           }}
         >
@@ -42,7 +41,7 @@ export const ReactiveMapDemo = () => {
         <button onClick={() => map.clear()}>Clear</button>
 
         <span>
-          Rendered <kbd>{++rerenderCount}</kbd> times
+          Rendered <kbd>{++rerenderCount.current}</kbd> times
         </span>
       </div>
 

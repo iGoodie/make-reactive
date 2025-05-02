@@ -17,8 +17,8 @@ body {
 
 .app {
   display: grid;
-  grid-template-columns: minmax(300px, 20vw) minmax(600px, 50vw);
-  gap: 20px;
+  grid-template-columns: 40vw 40vw;
+  gap: 40px;
 }
 
 nav {
@@ -69,6 +69,7 @@ button {
 }
 
 pre {
+  box-sizing: border-box;
   width: 100%;
   padding: 20px;
   background: darken($background, 5);
