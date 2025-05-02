@@ -1,9 +1,16 @@
-import { useReactiveArray } from "src/hooks/useReactiveArray";
+import { useEffect } from "react";
+import { useReactiveArray } from "src/hooks/useReactiveArray.new";
 
 let rerenderCount = 0;
 
 export const ReactiveArrayDemo = () => {
   const array = useReactiveArray<number>();
+
+  // useEffect(() => {
+  //   if (array[0] === 10) return;
+  //   console.log("TIMBER!", array[0]);
+  //   array[0]++;
+  // }, [array[0]]);
 
   return (
     <section>

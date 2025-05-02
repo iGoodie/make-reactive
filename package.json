@@ -54,7 +54,7 @@
     "vite-plugin-linter": "^2.0.6",
     "vite-tsconfig-paths": "^4.2.1"
   },
-  "dependencies": {
+  "peerDependencies": {
     "react": "^18.2.0"
   }
 }
