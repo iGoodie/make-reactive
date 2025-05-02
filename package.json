@@ -1,6 +1,6 @@
 {
   "name": "@igoodie/make-reactive",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "",
   "repository": "github:iGoodie/make-reactive",
   "license": "CC BY-SA 4.0",
@@ -41,13 +41,15 @@
     "lint:fix": "pnpm run lint --fix",
     "type-check": "tsc --project tsconfig.json --pretty --noEmit",
     "ci": "pnpm run lint && pnpm run type-check",
-    "predeploy": ""
+    "predeploy": "cd demo && pnpm i && pnpm build",
+    "deploy": "gh-pages -d demo/dist"
   },
   "devDependencies": {
     "@types/node": "^20.8.2",
     "@types/react": "^18.2.19",
     "@types/react-dom": "^18.2.10",
     "@vitejs/plugin-react": "^4.1.0",
+    "gh-pages": "^6.3.0",
     "pnpm": "^8.8.0",
     "react-dom": "^18.2.0",
     "sass": "^1.68.0",
