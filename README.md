@@ -127,6 +127,7 @@ export class Player {
   }
 }
 ```
+
 ```ts
 // src/hooks/usePlayer.ts
 
@@ -135,11 +136,11 @@ import makeReactive from "@igoodie/make-reactive";
 export const usePlayer = makeReactive(
   (player: Player) => player,
   (forceRerender) => ({
-    damage: true,
+    damage: true, // <-- Automatically makes every call reactive
 
     equip(self, item) {
       const result = self.equip(item);
-      if (result) forceRerender();
+      if (result) forceRerender(); // <-- Only makes successful "equipment" results rerender
       return result;
     },
   })
@@ -148,7 +149,27 @@ export const usePlayer = makeReactive(
 
 # How does it work under the hood?
 
-TODO
+The `makeReactive` function uses a combination of React hooks, JavaScript Proxies, and method interception to turn mutable objects like Map, Set, and Array into reactive data sources that trigger rerenders in React.
+
+Here's the breakdown of how it works:
+
+1. **Proxy Wrapping:**
+   The object returned by your initiator (e.g., a new Map() or new Array()) is wrapped in a Proxy. This lets us intercept get calls (i.e., property or method accesses).
+
+2. **Method Hooking:**
+   When a method is accessed, such as `.set()` on a `Map`, the proxy checks if a hook is defined for it:
+
+   - If value `true` is specified, the method is automatically wrapped to call forceUpdate() after execution.
+
+   - If a custom function is provided, it is executed instead, giving you fine-grained control over how and when rerenders are triggered.
+
+3. **Rerendering:**
+   A simple `const [, forceUpdate] = useState(0)` is used to force rerenders. When `forceUpdate(i => i + 1)` is called, it increments the state value, triggering React to update the component.
+
+4. **Memoization & Efficiency:**
+   Methods are only wrapped once, using a Map to cache wrapped versions. This avoids redundant closures and improves runtime efficiency.
+
+This design allows you to write minimal glue code while keeping full control over reactivity and performance.
 
 ## License
 
