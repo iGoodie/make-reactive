@@ -53,6 +53,11 @@ export function makeReactive<TArgs extends unknown[], TObj extends object>(
 ```    *
        */
       methodHooks?: MethodHooks<TObj>;
+
+      /**
+       * makeReactive wraps given object by an ES6 Proxy.
+       * Using this config, you can override the Proxy handler.
+       */
       proxyHandlerOverrides?: ProxyHandler<TObj>;
     }
   >
