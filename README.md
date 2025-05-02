@@ -5,7 +5,7 @@
 
 <!-- Slogan -->
 <p align="center">
-   Spend less time crafting your Compound Components structure
+   Make your objects talk to React — automatically
 </p>
 <!-- Badges -->
 <p align="center">

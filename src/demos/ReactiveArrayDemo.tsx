@@ -38,6 +38,13 @@ export const ReactiveArrayDemo = () => {
         {"\n\n"}
         array = {JSON.stringify(array, null, 2)}
       </pre>
+
+      <a
+        href="https://github.com/iGoodie/make-reactive/blob/master/src/demos/ReactiveArrayDemo.tsx"
+        target="_blank"
+      >
+        ^ See Code
+      </a>
     </section>
   );
 };

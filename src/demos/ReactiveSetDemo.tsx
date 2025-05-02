@@ -1,14 +1,13 @@
-import { useReactiveSet } from "src/hooks/useReactiveSet";
-
-let rerenderCount = 0;
+import { useReactiveSet } from "@igoodie/make-reactive";
+import { useRef } from "react";
 
 export const ReactiveSetDemo = () => {
   const set = useReactiveSet<number>();
 
+  const rerenderCount = useRef(0);
+
   return (
     <section>
-      <h1>Demo of ./src/hooks/useReactiveSet.ts</h1>
-
       <div className="actions">
         <button
           onClick={() => {
@@ -30,11 +29,22 @@ export const ReactiveSetDemo = () => {
         <button onClick={() => set.clear()}>Clear</button>
 
         <span>
-          Rendered <kbd>{++rerenderCount}</kbd> times
+          Rendered <kbd>{++rerenderCount.current}</kbd> times
         </span>
       </div>
 
-      <pre>set = {JSON.stringify([...set], null, 2)}</pre>
+      <pre>
+        set.size = {set.size}
+        {"\n\n"}
+        set = {JSON.stringify([...set], null, 2)}
+      </pre>
+
+      <a
+        href="https://github.com/iGoodie/make-reactive/blob/master/src/demos/ReactiveSetDemo.tsx"
+        target="_blank"
+      >
+        ^ See Code
+      </a>
     </section>
   );
 };

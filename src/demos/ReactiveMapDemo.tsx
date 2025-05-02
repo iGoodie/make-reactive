@@ -45,7 +45,18 @@ export const ReactiveMapDemo = () => {
         </span>
       </div>
 
-      <pre>map = {JSON.stringify([...map], null, 2)}</pre>
+      <pre>
+        map.size = {map.size}
+        {"\n\n"}
+        map = {JSON.stringify([...map], null, 2)}
+      </pre>
+
+      <a
+        href="https://github.com/iGoodie/make-reactive/blob/master/src/demos/ReactiveMapDemo.tsx"
+        target="_blank"
+      >
+        ^ See Code
+      </a>
     </section>
   );
 };

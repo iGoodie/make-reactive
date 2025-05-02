@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "description": "",
   "repository": "github:iGoodie/make-reactive",
+  "license": "CC BY-SA 4.0",
+  "author": {
+    "name": "iGoodie",
+    "url": "https://github.com/iGoodie",
+    "email": "igoodie@programmer.net"
+  },
   "keywords": [
     "generate",
     "hook",
@@ -35,12 +41,6 @@
     "type-check": "tsc --project tsconfig.json --pretty --noEmit",
     "ci": "pnpm run lint && pnpm run type-check"
   },
-  "author": {
-    "name": "iGoodie",
-    "url": "https://github.com/iGoodie",
-    "email": "igoodie@programmer.net"
-  },
-  "license": "CC BY-SA 4.0",
   "devDependencies": {
     "@types/node": "^20.8.2",
     "@types/react": "^18.2.19",

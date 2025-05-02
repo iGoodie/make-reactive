@@ -15,9 +15,43 @@ type MethodHooks<T extends object> = {
 
 export function makeReactive<TArgs extends unknown[], TObj extends object>(
   initiator: (...args: TArgs) => TObj,
+
   configBuilder: ConfigBuilder<
     [forceRerender: () => void, originalObject: TObj],
     {
+      /**
+       * Hooks to make given methods reactive. Used either;
+       * 
+       * - By setting a method name's value to "true", to automatically make them reactive:
+       * ```ts
+       * export const useReactiveArray = makeReactive(
+       *  <T>() => new Array<T>(),
+       *  {
+       *    methodHooks: {
+       *      concat: true,
+       *      copyWithin: true,
+       *      splice: true,
+       *      // .. etc
+       *    }
+       *  }
+       * )
+       * ```
+       * 
+       * - Or, by writing a custom hook, for more customized logic.
+       * ``` ts
+       * export const useReactiveMap = makeReactive(
+       *   <K, V>() => new Map<K, V>(),
+       *   (forceRerender) => ({
+       *     methodHooks: {
+       *       delete(self, key) {
+       *         if (self.has(key)) forceRerender();
+       *         return self.delete(key);
+       *       },
+       *     },
+       *   })
+       * );
+```    *
+       */
       methodHooks?: MethodHooks<TObj>;
       proxyHandlerOverrides?: ProxyHandler<TObj>;
     }

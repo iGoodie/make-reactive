@@ -1,24 +1,19 @@
-$background: #635985;
-$primary: #443c68;
-$secondary: #393053;
-$ternary: #18122b;
+$background: #241925;
+$primary: #655e86;
+$secondary: #ccbff3;
+$ternary: #403879;
 
 * {
   font-weight: 500;
 }
 
 body {
-  margin: 2rem;
+  margin: 0;
+  min-height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   background: $background;
-}
-
-.app {
-  display: grid;
-  grid-template-columns: 40vw 40vw;
-  gap: 40px;
 }
 
 nav {
@@ -27,7 +22,46 @@ nav {
   color: $primary;
 }
 
+nav {
+  margin: 0 auto;
+  margin-top: auto;
+  display: flex;
+  gap: 10px;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 800;
+  color: darken($secondary, 8);
+}
+
+a {
+  color: #fff;
+}
+
+#root {
+  flex-grow: 1;
+  margin: 4rem;
+  display: flex;
+}
+
+.app {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 80px;
+}
+
 h1 {
+  font-family: "Courier New", Courier, monospace;
+  font-weight: 800;
+  color: darken($secondary, 8);
+}
+
+h2 {
   font-family: "Courier New", Courier, monospace;
   font-weight: 800;
   color: darken($secondary, 8);
@@ -65,6 +99,15 @@ button {
       font-weight: 800;
       font-size: 15px;
     }
+  }
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+
+  & > a {
+    margin-inline-start: auto;
   }
 }
 
