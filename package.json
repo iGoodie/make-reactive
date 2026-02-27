@@ -25,6 +25,7 @@
   "types": "./dist/main.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/main.d.ts",
       "import": "./dist/@igoodie/make-reactive.es.js",
       "require": "./dist/@igoodie/make-reactive.umd.js"
     }
