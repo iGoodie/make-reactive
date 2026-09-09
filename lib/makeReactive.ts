@@ -1,120 +1,140 @@
-import { ConfigBuilder } from "./configBuilder";
-import { ExtractMethods } from "./types";
-import { useState } from "react";
+import { ConfigFactory } from "lib/configFactory";
+import { ExtractMethods } from "lib/types";
+import { useRef, useState, useSyncExternalStore } from "react";
 
-type AssureFunction<T> = T extends (...args: any[]) => any ? T : never;
+type AssertFunction<T> = T extends (...args: any[]) => any ? T : never;
 
-type MethodHooks<T extends object> = {
-  [key in keyof ExtractMethods<T>]?:
-    | true
-    | ((
-        self: T,
-        ...args: Parameters<AssureFunction<T[key]>>
-      ) => ReturnType<AssureFunction<T[key]>>);
-};
+type ReactiveConfigFactory<TObj extends object> = ConfigFactory<
+  [rerender: () => void, originalObject: TObj],
+  {
+    /**
+     * Hooks to make given methods reactive. Used either;
+     *
+     * - By setting a method name's value to "true", to automatically make them reactive:
+     * ```ts
+     * export const useReactiveArray = makeReactive(
+     *  <T>() => new Array<T>(),
+     *  {
+     *    methodHooks: {
+     *      concat: true,
+     *      copyWithin: true,
+     *      splice: true,
+     *      // .. etc
+     *    }
+     *  }
+     * )
+     * ```
+     *
+     * - Or, by writing a custom hook, for more customized logic.
+     * ``` ts
+     * export const useReactiveMap = makeReactive(
+     *   <K, V>() => new Map<K, V>(),
+     *   (forceRerender) => ({
+     *     methodHooks: {
+     *       delete(self, key) {
+     *         if (self.has(key)) forceRerender();
+     *         return self.delete(key);
+     *       },
+     *     },
+     *   })
+     * );
+     *
+     */
+    methodHooks?: {
+      [key in keyof ExtractMethods<TObj>]?:
+        | true
+        | ((
+            self: TObj,
+            ...args: Parameters<AssertFunction<TObj[key]>>
+          ) => ReturnType<AssertFunction<TObj[key]>>);
+    };
+
+    /**
+     * makeReactive wraps given object by an ES6 Proxy.
+     * Using this config, you can override the Proxy handler.
+     */
+    proxyHandlerOverrides?: ProxyHandler<TObj>;
+  }
+>;
 
 export function makeReactive<TArgs extends unknown[], TObj extends object>(
-  initiator: (...args: TArgs) => TObj,
-
-  configBuilder: ConfigBuilder<
-    [forceRerender: () => void, originalObject: TObj],
-    {
-      /**
-       * Hooks to make given methods reactive. Used either;
-       * 
-       * - By setting a method name's value to "true", to automatically make them reactive:
-       * ```ts
-       * export const useReactiveArray = makeReactive(
-       *  <T>() => new Array<T>(),
-       *  {
-       *    methodHooks: {
-       *      concat: true,
-       *      copyWithin: true,
-       *      splice: true,
-       *      // .. etc
-       *    }
-       *  }
-       * )
-       * ```
-       * 
-       * - Or, by writing a custom hook, for more customized logic.
-       * ``` ts
-       * export const useReactiveMap = makeReactive(
-       *   <K, V>() => new Map<K, V>(),
-       *   (forceRerender) => ({
-       *     methodHooks: {
-       *       delete(self, key) {
-       *         if (self.has(key)) forceRerender();
-       *         return self.delete(key);
-       *       },
-       *     },
-       *   })
-       * );
-```    *
-       */
-      methodHooks?: MethodHooks<TObj>;
-
-      /**
-       * makeReactive wraps given object by an ES6 Proxy.
-       * Using this config, you can override the Proxy handler.
-       */
-      proxyHandlerOverrides?: ProxyHandler<TObj>;
-    }
-  >
+  objectFactory: (...args: TArgs) => TObj,
+  configFactory: ReactiveConfigFactory<TObj> = () => ({}),
 ) {
   return function useReactiveObject(...args: TArgs) {
-    const [, forceUpdate] = useState(0);
+    const rerenderCb = useRef<() => void>();
+    const rerenderCount = useRef(0);
 
-    const [obj] = useState<TObj>(() => {
-      const object = initiator(...args);
+    const rerender = () => {
+      rerenderCount.current++;
+      rerenderCb.current?.();
+    };
 
-      const config = ConfigBuilder.calc(
-        configBuilder,
-        () => forceUpdate((i) => i + 1),
-        object
-      );
+    const [obj] = useState(() => {
+      return objectFactory(...args);
+    });
 
-      const wrappedMethods = new Map<string | symbol, Function>();
+    const [config] = useState(() => {
+      return ConfigFactory.build(configFactory, [rerender, obj]);
+    });
 
-      const injected = new Proxy(object, {
+    const [proxy] = useState(() => {
+      const wrappedMethods = new Map<keyof TObj, Function>();
+
+      function getWrappedMethod(
+        key: keyof TObj,
+        value: TObj[keyof TObj],
+        lazyWrapper: (
+          method: (...args: unknown[]) => unknown,
+        ) => (...args: unknown[]) => unknown,
+      ) {
+        if (!wrappedMethods.has(key)) {
+          const method = value as (...args: unknown[]) => unknown;
+          wrappedMethods.set(key, lazyWrapper(method));
+        }
+
+        return wrappedMethods.get(key);
+      }
+
+      return new Proxy(obj, {
         ...config.proxyHandlerOverrides,
-
         get(target, p, receiver) {
+          const prop = p as keyof TObj;
           const value =
             config.proxyHandlerOverrides?.get != null
               ? config.proxyHandlerOverrides.get(target, p, receiver)
               : Reflect.get(target, p, receiver);
 
-          if (typeof value === "function") {
-            if (!wrappedMethods.has(p)) {
-              wrappedMethods.set(
-                p,
-                function (...args: any[]) {
-                  const methodHook =
-                    config.methodHooks?.[p as keyof typeof config.methodHooks];
+          if (typeof value !== "function") return value;
 
-                  if (typeof methodHook === "function") {
-                    return methodHook(target, ...(args as never));
-                  }
+          return getWrappedMethod(prop, value, (method) => {
+            return function (...args: unknown[]) {
+              const methodHook =
+                config.methodHooks?.[prop as keyof typeof config.methodHooks];
 
-                  if (methodHook === true) {
-                    forceUpdate((i) => i + 1);
-                  }
+              if (typeof methodHook === "function") {
+                return methodHook(target, ...(args as any));
+              }
 
-                  return (value as Function).bind(target)(...args);
-                }.bind(target)
-              );
-            }
-            return wrappedMethods.get(p);
-          }
+              const result = method.bind(target)(...args);
 
-          return value;
+              if (methodHook === true) {
+                rerender();
+              }
+
+              return result;
+            }.bind(target);
+          });
         },
       });
-
-      return injected;
     });
 
-    return obj;
+    useSyncExternalStore(
+      (cb) => (rerenderCb.current = cb),
+      () => rerenderCount.current,
+      () => rerenderCount.current,
+    );
+
+    return proxy;
   };
 }

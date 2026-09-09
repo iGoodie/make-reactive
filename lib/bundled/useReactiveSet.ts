@@ -2,20 +2,20 @@ import { makeReactive } from "../makeReactive";
 
 export const useReactiveSet = makeReactive(
   <T>() => new Set<T>(),
-  (forceRerender) => ({
+  (rerender) => ({
     methodHooks: {
       delete(self, key) {
-        if (self.has(key)) forceRerender();
+        if (self.has(key)) rerender();
         return self.delete(key);
       },
 
       clear(self) {
-        if (self.size !== 0) forceRerender();
+        if (self.size !== 0) rerender();
         return self.clear();
       },
 
       add(self, value) {
-        if (!self.has(value)) forceRerender();
+        if (!self.has(value)) rerender();
         return self.add(value);
       },
     },
@@ -25,5 +25,5 @@ export const useReactiveSet = makeReactive(
         return typeof value === "function" ? value.bind(target) : value;
       },
     },
-  })
+  }),
 );

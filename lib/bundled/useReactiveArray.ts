@@ -2,7 +2,7 @@ import { makeReactive } from "../makeReactive";
 
 export const useReactiveArray = makeReactive(
   <T>(initialValue: T[] = []) => new Array<T>(...initialValue),
-  (forceRerender) => ({
+  (rerender) => ({
     methodHooks: {
       concat: true,
       copyWithin: true,
@@ -18,10 +18,10 @@ export const useReactiveArray = makeReactive(
     proxyHandlerOverrides: {
       set(target, p, newValue, receiver) {
         if (typeof p === "string" && Number(p) >= 0) {
-          forceRerender();
+          rerender();
         }
         return Reflect.set(target, p, newValue, receiver);
       },
     },
-  })
+  }),
 );

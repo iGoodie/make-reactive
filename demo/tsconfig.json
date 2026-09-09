@@ -15,8 +15,12 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@igoodie/make-reactive": ["../lib/main.tsx"],
+      "lib/*": ["../lib/*"]
+    }
   },
-  "include": ["./src", "./lib"],
+  "include": ["./src", "../lib"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

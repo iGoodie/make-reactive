@@ -1,7 +1,6 @@
 export type ExtractMethods<
   T extends object,
-  $ownProps extends keyof T = keyof Omit<T, "toString" | "toLocaleString">
+  $ownProps extends keyof T = keyof T,
 > = {
   [K in $ownProps as T[K] extends Function ? K : never]: T[K];
 };
-
