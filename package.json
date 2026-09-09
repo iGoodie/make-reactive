@@ -1,6 +1,7 @@
 {
   "name": "@igoodie/make-reactive",
   "version": "1.0.1",
+  "type": "module",
   "description": "",
   "repository": "github:iGoodie/make-reactive",
   "license": "CC BY-SA 4.0",
@@ -20,14 +21,14 @@
     "patch",
     "patcher"
   ],
-  "main": "./dist/@igoodie/make-reactive.umd.js",
-  "module": "./dist/@igoodie/make-reactive.es.js",
-  "types": "./dist/main.d.ts",
+  "main": "./dist/main.cjs",
+  "module": "./dist/main.mjs",
+  "types": "./dist/main.d.mts",
   "exports": {
     ".": {
-      "types": "./dist/main.d.ts",
-      "import": "./dist/@igoodie/make-reactive.es.js",
-      "require": "./dist/@igoodie/make-reactive.umd.js"
+      "types": "./dist/main.d.mts",
+      "import": "./dist/main.mjs",
+      "require": "./dist/main.cjs"
     }
   },
   "files": [
@@ -35,7 +36,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsdown",
     "build:demo": "tsc && vite build -c vite.config.demo.ts",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx",
@@ -46,18 +47,18 @@
     "deploy": "gh-pages -d demo/dist"
   },
   "devDependencies": {
-    "@types/node": "^20.8.2",
+    "@types/node": "^24.3.1",
     "@types/react": "^18.2.19",
     "@types/react-dom": "^18.2.10",
-    "@vitejs/plugin-react": "^4.1.0",
+    "@vitejs/plugin-react": "^6.0.0",
     "gh-pages": "^6.3.0",
     "pnpm": "^8.8.0",
     "react-dom": "^18.2.0",
-    "sass": "^1.68.0",
-    "vite": "^4.4.11",
-    "vite-plugin-dts": "^3.6.0",
-    "vite-plugin-linter": "^2.0.6",
-    "vite-tsconfig-paths": "^4.2.1"
+    "sass": "^1.70.0",
+    "tsdown": "^0.22.8",
+    "typescript": "^5.7.0",
+    "unrun": "^0.3.1",
+    "vite": "^8.0.0"
   },
   "peerDependencies": {
     "react": "^18.2.0"
