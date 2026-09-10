@@ -130,7 +130,10 @@ export function makeReactive<TArgs extends unknown[], TObj extends object>(
     });
 
     useSyncExternalStore(
-      (cb) => (rerenderCb.current = cb),
+      (cb) => {
+        rerenderCb.current = cb;
+        return () => {};
+      },
       () => rerenderCount.current,
       () => rerenderCount.current,
     );
