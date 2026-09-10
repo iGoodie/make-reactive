@@ -1,60 +1,65 @@
 import { ConfigFactory } from "lib/configFactory";
-import { ExtractMethods } from "lib/types";
 import { useRef, useState, useSyncExternalStore } from "react";
 
-type AssertFunction<T> = T extends (...args: any[]) => any ? T : never;
+type ExtractMethods<TObj extends object> = {
+  [K in keyof TObj as TObj[K] extends Function ? K : never]: TObj[K];
+};
 
-type ReactiveConfigFactory<TObj extends object> = ConfigFactory<
+export type MethodHook<
+  TObj extends object,
+  TMethod extends keyof TObj,
+> = TObj[TMethod] extends (...args: infer U) => infer V
+  ? (self: TObj, args: U) => V
+  : never;
+
+export type ReactiveConfig<TObj extends object> = {
+  /**
+   * Hooks to make given methods reactive. Used either;
+   *
+   * - By setting a method name's value to "true", to automatically make them reactive:
+   * ```ts
+   * export const useReactiveArray = makeReactive(
+   *  <T>() => new Array<T>(),
+   *  {
+   *    methodHooks: {
+   *      concat: true,
+   *      copyWithin: true,
+   *      splice: true,
+   *      // .. etc
+   *    }
+   *  }
+   * )
+   * ```
+   *
+   * - Or, by writing a custom hook, for more customized logic.
+   * ``` ts
+   * export const useReactiveMap = makeReactive(
+   *   <K, V>() => new Map<K, V>(),
+   *   (forceRerender) => ({
+   *     methodHooks: {
+   *       delete(self, key) {
+   *         if (self.has(key)) forceRerender();
+   *         return self.delete(key);
+   *       },
+   *     },
+   *   })
+   * );
+   *
+   */
+  methodHooks?: {
+    [K in keyof ExtractMethods<TObj>]?: true | MethodHook<TObj, K>;
+  };
+
+  /**
+   * makeReactive wraps given object by an ES6 Proxy.
+   * Using this config, you can override the Proxy handler.
+   */
+  proxyHandlerOverrides?: ProxyHandler<TObj>;
+};
+
+export type ReactiveConfigFactory<TObj extends object> = ConfigFactory<
   [rerender: () => void, originalObject: TObj],
-  {
-    /**
-     * Hooks to make given methods reactive. Used either;
-     *
-     * - By setting a method name's value to "true", to automatically make them reactive:
-     * ```ts
-     * export const useReactiveArray = makeReactive(
-     *  <T>() => new Array<T>(),
-     *  {
-     *    methodHooks: {
-     *      concat: true,
-     *      copyWithin: true,
-     *      splice: true,
-     *      // .. etc
-     *    }
-     *  }
-     * )
-     * ```
-     *
-     * - Or, by writing a custom hook, for more customized logic.
-     * ``` ts
-     * export const useReactiveMap = makeReactive(
-     *   <K, V>() => new Map<K, V>(),
-     *   (forceRerender) => ({
-     *     methodHooks: {
-     *       delete(self, key) {
-     *         if (self.has(key)) forceRerender();
-     *         return self.delete(key);
-     *       },
-     *     },
-     *   })
-     * );
-     *
-     */
-    methodHooks?: {
-      [key in keyof ExtractMethods<TObj>]?:
-        | true
-        | ((
-            self: TObj,
-            ...args: Parameters<AssertFunction<TObj[key]>>
-          ) => ReturnType<AssertFunction<TObj[key]>>);
-    };
-
-    /**
-     * makeReactive wraps given object by an ES6 Proxy.
-     * Using this config, you can override the Proxy handler.
-     */
-    proxyHandlerOverrides?: ProxyHandler<TObj>;
-  }
+  ReactiveConfig<TObj>
 >;
 
 export function makeReactive<TArgs extends unknown[], TObj extends object>(
@@ -90,7 +95,7 @@ export function makeReactive<TArgs extends unknown[], TObj extends object>(
       ) {
         if (!wrappedMethods.has(key)) {
           const method = value as (...args: unknown[]) => unknown;
-          wrappedMethods.set(key, lazyWrapper(method));
+          wrappedMethods.set(key, lazyWrapper(method).bind(obj));
         }
 
         return wrappedMethods.get(key);
@@ -113,7 +118,7 @@ export function makeReactive<TArgs extends unknown[], TObj extends object>(
                 config.methodHooks?.[prop as keyof typeof config.methodHooks];
 
               if (typeof methodHook === "function") {
-                return methodHook(target, ...(args as any));
+                return methodHook(target, args);
               }
 
               const result = method.bind(target)(...args);
@@ -123,7 +128,7 @@ export function makeReactive<TArgs extends unknown[], TObj extends object>(
               }
 
               return result;
-            }.bind(target);
+            };
           });
         },
       });

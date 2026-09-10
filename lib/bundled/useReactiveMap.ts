@@ -4,29 +4,33 @@ export const useReactiveMap = makeReactive(
   <K, V>() => new Map<K, V>(),
   (rerender) => ({
     methodHooks: {
-      delete(self, key) {
+      delete(self, args) {
+        const [key] = args;
         if (self.has(key)) rerender();
-        return self.delete(key);
+        return self.delete(...args);
       },
 
-      clear(self) {
+      clear(self, args) {
         if (self.size !== 0) rerender();
-        return self.clear();
+        return self.clear(...args);
       },
 
-      set(self, key, value) {
+      set(self, args) {
+        const [key, value] = args;
         if (self.get(key) !== value) rerender();
-        return self.set(key, value);
+        return self.set(...args);
       },
 
-      getOrInsert(self, key, defaultValue) {
+      getOrInsert(self, args) {
+        const [key] = args;
         if (!self.has(key)) rerender();
-        return self.getOrInsert(key, defaultValue);
+        return self.getOrInsert(...args);
       },
 
-      getOrInsertComputed(self, key, callback) {
+      getOrInsertComputed(self, args) {
+        const [key] = args;
         if (!self.has(key)) rerender();
-        return self.getOrInsertComputed(key, callback);
+        return self.getOrInsertComputed(...args);
       },
     },
     proxyHandlerOverrides: {

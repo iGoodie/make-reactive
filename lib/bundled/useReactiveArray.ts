@@ -1,4 +1,4 @@
-import { makeReactive } from "../makeReactive";
+import { makeReactive, ReactiveConfig } from "../makeReactive";
 
 export const useReactiveArray = makeReactive(
   <T>(initialValue: T[] = []) => new Array<T>(...initialValue),
@@ -6,15 +6,30 @@ export const useReactiveArray = makeReactive(
     methodHooks: {
       concat: true,
       copyWithin: true,
-      splice: true,
       fill: true,
-      pop: true,
       push: true,
       reverse: true,
-      shift: true,
       unshift: true,
       sort: true,
-    },
+
+      pop(self) {
+        if (self.length !== 0) rerender();
+        return self.pop();
+      },
+
+      shift(self) {
+        if (self.length !== 0) rerender();
+        return self.shift();
+      },
+
+      splice(self, args) {
+        const [, , ...items] = args;
+        const deleted = self.splice(...args);
+        if (deleted.length !== 0) rerender();
+        else if (items.length !== 0) rerender();
+        return deleted;
+      },
+    } as ReactiveConfig<Array<unknown>>["methodHooks"],
     proxyHandlerOverrides: {
       set(target, p, newValue, receiver) {
         if (typeof p === "string" && Number(p) >= 0) {

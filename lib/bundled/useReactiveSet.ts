@@ -4,19 +4,21 @@ export const useReactiveSet = makeReactive(
   <T>() => new Set<T>(),
   (rerender) => ({
     methodHooks: {
-      delete(self, key) {
+      delete(self, args) {
+        const [key] = args;
         if (self.has(key)) rerender();
-        return self.delete(key);
+        return self.delete(...args);
       },
 
-      clear(self) {
+      clear(self, args) {
         if (self.size !== 0) rerender();
-        return self.clear();
+        return self.clear(...args);
       },
 
-      add(self, value) {
+      add(self, args) {
+        const [value] = args;
         if (!self.has(value)) rerender();
-        return self.add(value);
+        return self.add(...args);
       },
     },
     proxyHandlerOverrides: {
